@@ -5,9 +5,7 @@ const logger = require("./config/logger.config");
 let server;
 
 server = storematic_app.listen(env.port, () => {
-  logger.info(
-    `Storematic App running | Port: ${env.port} | Environment: ${env.env}`
-  );
+  logger.info(`Storematic App running (Port: ${env.port} - Env: ${env.env})`);
 });
 
 // Handle server listen errors
