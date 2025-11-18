@@ -1,23 +1,20 @@
 const { v4: uuidv4 } = require("uuid");
 
 // Middleware to assign a unique request ID to each incoming request
-const request_id_middleware = (req, res, next) => {
-  const headerId = req.headers["x-request-id"];
+const middleware_request_id = (p_request, p_response, p_next) => {
+  const header_id = p_request.headers["x-request-id"];
 
   // Prefer client-provided id if sane, else generate
   const id =
-    typeof headerId === "string" && headerId.trim().length > 0
-      ? headerId.trim()
-      : uuidv4();
-
+    typeof header_id === "string" && header_id.trim().length > 0 ? header_id.trim() : uuidv4();
   // Attach to request + response locals
-  req.id = id;
-  res.locals.requestId = id;
+  p_request.id = id;
+  p_response.locals.requestId = id;
 
   // Attach to outgoing response header
-  res.setHeader("X-Request-Id", id);
+  p_response.setHeader("X-Request-Id", id);
 
-  next();
+  p_next();
 };
 
-module.exports = request_id_middleware;
+module.exports = middleware_request_id;

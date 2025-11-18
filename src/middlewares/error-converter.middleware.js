@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const ApiError = require("../utils/api-error.util");
+const UtlApiError = require("../utils/api-error.util");
 
 /**
  * Error converter middleware
@@ -8,11 +8,11 @@ const ApiError = require("../utils/api-error.util");
  * @param {Response} response - The Express response object
  * @param {Function} next - The next middleware function
  */
-const error_converter = (error, request, response, next) => {
-  let this_error = error;
+const middleware_error_converter = (p_error, p_request, p_response, p_next) => {
+  let this_error = p_error;
 
-  if (!(this_error instanceof ApiError)) {
-    const statusCode =
+  if (!(this_error instanceof UtlApiError)) {
+    const status_code =
       this_error.statusCode ||
       // FIXME later
       // postgresSQL error of any kind:
@@ -21,11 +21,11 @@ const error_converter = (error, request, response, next) => {
       this_error.name === "SequelizeUniqueConstraintError"
         ? StatusCodes.BAD_REQUEST
         : StatusCodes.INTERNAL_SERVER_ERROR;
-    const message = this_error.message || StatusCodes[statusCode];
-    this_error = new ApiError(statusCode, message, false, this_error.stack);
+    const message = this_error.message || StatusCodes[status_code];
+    this_error = new UtlApiError(status_code, message, false, this_error.stack);
   }
 
-  next(this_error);
+  p_next(this_error);
 };
 
-module.exports = error_converter;
+module.exports = middleware_error_converter;

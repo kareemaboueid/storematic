@@ -1,12 +1,12 @@
-const rateLimit = require("express-rate-limit");
+const rate_limit = require("express-rate-limit");
 
 /**
  * Rate limiter middleware
  */
-const rate_limiter = rateLimit({
+const middleware_rate_limiter = rate_limit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   skipSuccessfulRequests: true,
 });
 
-module.exports = rate_limiter;
+module.exports = middleware_rate_limiter;

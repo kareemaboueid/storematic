@@ -1,12 +1,12 @@
 /**
- * ApiError class
+ * UtlApiError class
  * @extends Error
  */
-class ApiError extends Error {
-  constructor(statusCode, message, isOperational = true, stack = "") {
+class UtlApiError extends Error {
+  constructor(status_code, message, is_operational = true, stack = "") {
     super(message);
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
+    this.statusCode = status_code;
+    this.isOperational = is_operational;
     if (stack) {
       this.stack = stack;
     } else {
@@ -15,4 +15,4 @@ class ApiError extends Error {
   }
 }
 
-module.exports = ApiError;
+module.exports = UtlApiError;

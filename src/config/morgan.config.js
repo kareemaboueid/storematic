@@ -1,10 +1,10 @@
 const morgan = require("morgan");
-const env = require("./env.config");
-const logger = require("./logger.config");
+const config_env = require("./env.config");
+const config_logger = require("./logger.config");
 
 // Custom Morgan token to colorize status codes
-morgan.token("colored_status", (request, response) => {
-  const status = response.statusCode;
+morgan.token("colored_status", (p_request, p_response) => {
+  const status = p_response.statusCode;
 
   let color;
   if (status >= 500) color = "\x1b[35m";
@@ -18,29 +18,19 @@ morgan.token("colored_status", (request, response) => {
 });
 
 // Custom token for request id
-morgan.token("req_id", (request, response) => {
+morgan.token("req_id", (p_request, p_response) => {
   // Prefer the id from middleware, fall back to header or "-"
-  return (
-    request.id ||
-    response.locals.requestId ||
-    request.headers["x-request-id"] ||
-    "-"
-  );
+  return p_request.id || p_response.locals.requestId || p_request.headers["x-request-id"] || "-";
 });
 
 // custom token to log error message
-morgan.token(
-  "message",
-  (request, response) => response.locals.errorMessage || ""
-);
+morgan.token("message", (p_request, p_response) => p_response.locals.errorMessage || "");
 
 // custom token to print speed_unit "ms"
-morgan.token("speed_unit", (request, response) => {
-  return "ms";
-});
+morgan.token("speed_unit", () => "ms");
 
 // Define log format including IP address in production
-const get_ip_format = () => (env.env === "production" ? ":remote-addr - " : "");
+const get_ip_format = () => (config_env.env === "production" ? ":remote-addr - " : "");
 
 // Format for successful responses
 const success_response_format = `${get_ip_format()}:method :url :colored_status :response-time:speed_unit (id: :req_id)`;
@@ -50,17 +40,19 @@ const error_response_format = `${get_ip_format()}:method :url :colored_status :r
 
 // Success handler for logging successful requests
 const success_logger = morgan(success_response_format, {
-  skip: (request, response) => response.statusCode >= 400,
-  stream: { write: (message) => logger.info(message.trim()) },
+  skip: (p_request, p_response) => p_response.statusCode >= 400,
+  stream: { write: (message) => config_logger.info(message.trim()) },
 });
 
 // Error handler for logging failed requests
 const error_logger = morgan(error_response_format, {
-  skip: (request, response) => response.statusCode < 400,
-  stream: { write: (message) => logger.error(message.trim()) },
+  skip: (p_request, p_response) => p_response.statusCode < 400,
+  stream: { write: (message) => config_logger.error(message.trim()) },
 });
 
-module.exports = {
+const config_morgan = {
   success_logger,
   error_logger,
 };
+
+module.exports = config_morgan;

@@ -1,21 +1,15 @@
 const storematic_app = require("./storematic");
-const env = require("./config/env.config");
-const logger = require("./config/logger.config");
+const config_env = require("./config/env.config");
+const config_logger = require("./config/logger.config");
 
-let server;
-
-server = storematic_app.listen(env.port, () => {
-  logger.info(`Storematic App running (Port: ${env.port} - Env: ${env.env})`);
+const server = storematic_app.listen(config_env.port, () => {
+  config_logger.info(`Storematic App running (Port: ${config_env.port} - Env: ${config_env.env})`);
 });
 
 // Handle server listen errors
-server.on("error", (error) => {
-  if (
-    error.code === "EADDRINUSE" ||
-    error.code === "EACCES" ||
-    error.code === "ENOTFOUND"
-  ) {
-    logger.error(`Failed to start server: ${error.message}`);
+server.on("error", (p_error) => {
+  if (p_error.code === "EADDRINUSE" || p_error.code === "EACCES" || p_error.code === "ENOTFOUND") {
+    config_logger.error(`Failed to start server: ${p_error.message}`);
   }
   process.exit(1);
 });
@@ -23,7 +17,7 @@ server.on("error", (error) => {
 const server_exit_handler = (is_error = false) => {
   if (server) {
     server.close(() => {
-      logger.info("Server closed");
+      config_logger.info("Server closed");
       process.exit(is_error ? 1 : 0);
     });
   } else {
@@ -31,8 +25,8 @@ const server_exit_handler = (is_error = false) => {
   }
 };
 
-const server_unexpected_error_handler = (error) => {
-  logger.error(`Unexpected server error: ${error}`);
+const server_unexpected_error_handler = (p_error) => {
+  config_logger.error(`Unexpected server error: ${p_error}`);
   server_exit_handler(true);
 };
 
@@ -40,7 +34,7 @@ process.on("uncaughtException", server_unexpected_error_handler);
 process.on("unhandledRejection", server_unexpected_error_handler);
 
 process.on("SIGTERM", () => {
-  logger.info("SIGTERM received");
+  config_logger.info("SIGTERM received");
   if (server) {
     server.close();
   }
