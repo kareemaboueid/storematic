@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:migrate": "node src/database/migrate.database.js"
   },
   "dependencies": {
     "compression": "^1.8.1",
