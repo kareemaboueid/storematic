@@ -14,7 +14,7 @@ const env_vars_schema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid("production", "development", "test").required(),
     PORT: Joi.number().default(8888),
-    POSTGRESQL_URL: Joi.string().required().description("PostgreSQL DB url"),
+    DATABASE_URL: Joi.string().required().description("PostgreSQL connection string"),
     JWT_SECRET: Joi.string().required().description("JWT secret key"),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()
       .default(30)
@@ -45,7 +45,7 @@ const config_env = {
   env: env_vars.NODE_ENV,
   port: env_vars.PORT,
   postgresql: {
-    url: env_vars.POSTGRESQL_URL + (env_vars.NODE_ENV === "test" ? "-test" : ""),
+    url: env_vars.DATABASE_URL + (env_vars.NODE_ENV === "test" ? "-test" : ""),
   },
   jwt: {
     secret: env_vars.JWT_SECRET,
