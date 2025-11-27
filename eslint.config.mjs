@@ -2,11 +2,20 @@ import { defineConfig } from "eslint/config";
 import js from "@eslint/js";
 import eslintPluginPrettier from "eslint-plugin-prettier";
 import eslintConfigPrettier from "eslint-config-prettier";
+import globals from "globals";
 
 export default defineConfig([
   // 1. Global ignores
   {
-    ignores: ["node_modules", "dist", "build", "coverage", "logs", "prisma/migrations/**"],
+    ignores: [
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      "logs",
+      "prisma/migrations/**",
+      "db/migrations/**", // raw SQL, not JS
+    ],
   },
 
   // 2. Base JS recommended rules
@@ -22,11 +31,7 @@ export default defineConfig([
       ecmaVersion: 2022,
       sourceType: "commonjs",
       globals: {
-        // Node globals:
-        process: "readonly",
-        __dirname: "readonly",
-        module: "readonly",
-        require: "readonly",
+        ...globals.node,
       },
     },
     plugins: {
@@ -43,13 +48,13 @@ export default defineConfig([
       "prefer-const": "error",
 
       // Naming conventions:
-      // - Allow snake_case and UPPER_SNAKE_CASE identifiers
+      // allow:
+      //  - snake_case
+      //  - UPPER_SNAKE_CASE
+      //  - PascalCase (for classes & imports like Joi, UtlApiError)
       camelcase: "off",
       "id-match": [
         "error",
-        // - snake_case
-        // - UPPER_SNAKE_CASE
-        // - PascalCase (for classes & imports)
         "^([a-z][a-z0-9]*(?:_[a-z0-9]+)*|[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*|[A-Z][a-zA-Z0-9]*)$",
         {
           properties: false,
