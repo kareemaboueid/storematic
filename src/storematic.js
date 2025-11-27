@@ -11,6 +11,9 @@ const middleware_error_converter = require("./middlewares/error-converter.middle
 const middleware_error_handler = require("./middlewares/error-handler.middleware");
 const UtlApiError = require("./utils/api-error.util");
 
+// routers
+const router_check_health = require("./routes/check-health.route");
+
 // initialize express app
 const storematic_app = express();
 
@@ -44,9 +47,7 @@ if (config_env.env === "production") {
 }
 
 // check health endpoint
-storematic_app.get("/health", (p_request, p_response) => {
-  p_response.status(StatusCodes.OK).json({ status: "OK" });
-});
+storematic_app.use("/health", router_check_health);
 
 // send back a 404 error for any unknown api request
 storematic_app.use((p_request, p_response, p_next) => {
